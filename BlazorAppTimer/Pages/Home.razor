@@ -1,0 +1,53 @@
+﻿@page "/"
+@using System.Timers
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+
+
+<h1 class="text-muted">@timeString</h1>
+
+@code {
+    private Timer _timer;
+    private int _minutes = 10;
+    private int _seconds = 0;
+    private string timeString;
+
+    protected override void OnInitialized()
+    {
+        timeString = $"{_minutes:D2}:{_seconds:D2}";
+        _timer = new Timer(1000);
+        _timer.Elapsed += OnTimerElapsed;
+        _timer.AutoReset = true;
+        _timer.Enabled = true;
+    }
+
+    private void OnTimerElapsed(object sender, ElapsedEventArgs e)
+    {
+        if (_seconds == 0)
+        {
+            if (_minutes == 0)
+            {
+                _timer.Stop();
+                return;
+            }
+            _minutes--;
+            _seconds = 59;
+        }
+        else
+        {
+            _seconds--;
+        }
+
+        timeString = $"{_minutes:D2}:{_seconds:D2}";
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+    }
+}
